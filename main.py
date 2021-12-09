@@ -16,8 +16,6 @@ from discord.ext.commands.bot import AutoShardedBot
 #clients
 client = discord.Client()
 
-client = commands.Bot(command_prefix = '[')
-
 players = {}
 
 status = cycle(['Patting Ruina', 'Ruina Simulator'])
@@ -93,6 +91,12 @@ async def on_message(message):
 
 
 
+
+#Tasks
+@tasks.loop(hours = 12)
+async def ruina_status():
+    await client.change_presence(activity = discord.Game(next(status)))
+
 #events
 @client.event
 async def on_ready():
@@ -101,84 +105,5 @@ async def on_ready():
 
 
 
-#make the bot join voice channel
-@client.command(pass_context = True)
-async def join_voice(ctx):
-    channel = ctx.message.author.voice.channel
-    await channel.connect()
-    await ctx.send('RuinaBot has joined the voice Channel!')
 
-
-#make the bot leave voice channel
-@client.command(pass_context = True)
-async def leave_voice(ctx):
-    await ctx.guild.voice_client.disconnect()
-    await ctx.send('RuinaBot has left the voice channel')
-    
-
-#musics play
-@client.command(pass_context = True)
-async def play(ctx,url):
-    guild = ctx.message.guild
-    voice_client = guild.voice_client
-    player = await voice_client.create_ytdl_player(url)
-    players[guild.id] = player
-    player.start()
-
-#Tasks
-@tasks.loop(hours = 12)
-async def ruina_status():
-    await client.change_presence(activity = discord.Game(next(status)))
-
-
-#delete message command
-@client.command()
-@commands.has_permissions(manage_messages=True)
-async def clean(ctx, amount = 100):
-    if amount == None:
-        await ctx.channel.send('Error desu`~ Please type correctly u baka`~!')
-    else :
-        await ctx.channel.purge(limit=amount)
-
-#kick command
-@client.command()
-@commands.has_permissions(administrator = True)
-async def kick(ctx, member : discord.Member, * , reason = 'For violating the server rules you have been kicked from the server'):
-    await member.kick(reason=reason)
-
-
-#ban command
-@client.command()
-async def ban(ctx, member : discord.Member, * , reason = 'For violating the server rules you have been banned from the server'):
-    await member.ban(reason=reason)
-    await ctx.send(f'{member.mention} have been banned for violating the server rules')
-
-#unban command
-@client.command()
-async def unban(ctx, *, member):
-    banned_users = await ctx.guild.bans()
-    member_name, member_discriminator = member.split('#')
-
-    for ban_entry in banned_users:
-        user = ban_entry.user
-
-        if(user.name, user.discriminator) == (member_name, member_discriminator):
-            await ctx.guild.unban(user)
-            await ctx.send(f'{user.mention} Have been unbanned')
-            return
-
-# cogs
-# @client.command()
-# async def load(ctx, extension):
-#     client.load_extension(f'cogs.{extension}')
-
-# @client.command()
-# async def unload(ctx, extension):
-#     client.unload_extension(f'cogs.{extension}')
-
-# for filename in os.listdir('./cogs'):
-#     if filename.endswith('.py'):
-#         client.load_extension(f'cogs.{filename[:-3]}')
-
-#Run the client on the server
 client.run('OTE0MTcyMzQ3Mzc4OTg3MDY4.YaJLWA.LkEQUv0Z1heuebEPf_6vWrRKurM')
