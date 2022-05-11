@@ -1,4 +1,5 @@
 #Import Discord Package
+
 from logging import info
 import discord
 from discord import voice_client
@@ -106,4 +107,4 @@ async def on_ready():
 
 
 
-client.run('OTE0MTcyMzQ3Mzc4OTg3MDY4.YaJLWA.LkEQUv0Z1heuebEPf_6vWrRKurM')
+client.run('OTczOTMyMDA3NTg5NTc2NzE0.GT3bJr.t3YpTrkTDFaQEAFqFdf2aoaK4pJeAmxSrNy_qs')
